@@ -123,10 +123,10 @@ for epoch in range(1000):
 
             # 记录验证指标到TensorBoard
             writer.add_scalars("loss", {"test": loss.item()}, step)  # 验证损失
-            writer.add_scalars("auc", {"mae": mae_auc.item()}, step)      # MAE AUC
-            writer.add_scalars("auc", {"attn": attn_auc.item()}, step)    # 注意力AUC
-            writer.add_scalars("auc", {"xujing": xujing_auc.item()}, step) # 相对误差AUC
-            writer.add_scalars("auc", {"mse": mse_auc.item()}, step)      # MSE AUC
+            writer.add_scalars("auc", {"mae": mae_auc}, step)      # MAE AUC
+            writer.add_scalars("auc", {"attn": attn_auc}, step)    # 注意力AUC
+            writer.add_scalars("auc", {"xujing": xujing_auc}, step) # 相对误差AUC
+            writer.add_scalars("auc", {"mse": mse_auc}, step)      # MSE AUC
 
         # 如果当前MAE AUC优于历史最佳，则保存模型
         if mae_auc > mae_best:
