@@ -29,8 +29,8 @@ setup_seed(99)
 os.makedirs('./result', exist_ok=True)
 
 # 调试断点（可注释掉）
-import pdb
-pdb.set_trace()
+# import pdb  # 重复导入，已注释（第16行已导入）
+# pdb.set_trace()  # 调试断点（已注释，正常运行请保持注释）
 
 # 加载数据集（16QAM调制信号的频谱数据）
 with open("../data/16QAM_Train_Test.pkl", "rb") as f:
