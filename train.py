@@ -29,9 +29,9 @@ with open("../data/16QAM_Train_Test.pkl", "rb") as f:
 
 # 提取训练集和测试集
 train_data = data["train_data"]    # 训练数据
-train_label = data["train_label"]  # 训练标签 (0=正常, 1=异常)
+train_label = data["train_label"]  # 训练标签 (0=异常, 1=正常)
 test_data = data["test_data"]      # 测试数据
-test_label = data["test_label"]    # 测试标签
+test_label = data["test_label"]    # 测试标签 (0=异常, 1=正常)
 
 # 设置数据加载器
 train_loader = torch.utils.data.DataLoader(
@@ -106,11 +106,11 @@ for epoch in range(1000):
             )
             data, label, output, mean, logvar = list(summary)  # 解包得到完整测试集
             
-            # 保存正常样本（label=0）和异常样本（label=1）的图像
-            save_image(data[label==0][-64:], "./result/input-test-n.png")    # 正常样本输入
-            save_image(output[label==0][-64:], "./result/output-test-n.png") # 正常样本重建
-            save_image(data[label==1][-64:], "./result/input-test-a.png")    # 异常样本输入
-            save_image(output[label==1][-64:], "./result/output-test-a.png") # 异常样本重建
+            # 保存异常样本（label=0）和正常样本（label=1）的图像
+            save_image(data[label==0][-64:], "./result/input-test-anomaly.png")    # 异常样本输入
+            save_image(output[label==0][-64:], "./result/output-test-anomaly.png") # 异常样本重建
+            save_image(data[label==1][-64:], "./result/input-test-normal.png")    # 正常样本输入
+            save_image(output[label==1][-64:], "./result/output-test-normal.png") # 正常样本重建
 
             # 计算验证损失和多种AUC评分
             loss = vae_loss(output, mean, logvar, data)  # 验证集损失

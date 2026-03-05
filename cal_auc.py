@@ -38,9 +38,9 @@ with open("../data/16QAM_Train_Test.pkl", "rb") as f:
 
 # 提取训练集和测试集
 train_data = data["train_data"]    # 训练数据
-train_label = data["train_label"]  # 训练标签 (0=正常, 1=异常)
+train_label = data["train_label"]  # 训练标签 (0=异常, 1=正常)
 test_data = data["test_data"]      # 测试数据
-test_label = data["test_label"]    # 测试标签
+test_label = data["test_label"]    # 测试标签 (0=异常, 1=正常)
 
 # 设置数据加载器
 train_loader = torch.utils.data.DataLoader(
@@ -75,11 +75,11 @@ with torch.no_grad():  # 不需要计算梯度
     )
     data, label, output, mean, logvar = list(summary)  # 解包得到完整测试集
 
-    # 保存正常样本和异常样本的图像
-    save_image(data[label==0][-64:], "./result/input-test-n.png")    # 正常样本输入
-    save_image(output[label==0][-64:], "./result/output-test-n.png") # 正常样本重建
-    save_image(data[label==1][-64:], "./result/input-test-a.png")    # 异常样本输入
-    save_image(output[label==1][-64:], "./result/output-test-a.png") # 异常样本重建
+    # 保存异常样本和正常样本的图像
+    save_image(data[label==0][-64:], "./result/input-test-anomaly.png")    # 异常样本输入
+    save_image(output[label==0][-64:], "./result/output-test-anomaly.png") # 异常样本重建
+    save_image(data[label==1][-64:], "./result/input-test-normal.png")    # 正常样本输入
+    save_image(output[label==1][-64:], "./result/output-test-normal.png") # 正常样本重建
 
     # 计算VAE重建误差的AUC
     loss = vae_loss(output, mean, logvar, data)  # VAE损失
@@ -114,11 +114,11 @@ cov_score = cov.decision_function(X)  # 决策函数值（值越小越异常）
 iso = IsolationForest(random_state=0).fit(X)  # 拟合孤立森林模型
 iso_score = iso.score_samples(X)  # 异常评分（值越小越异常）
 
-# 计算各种检测器的AUC（使用负分数，因为评分值越小表示越异常）
-lof_auc = roc_auc_score(label, -lof_score)  # LOF AUC
-svm_auc = roc_auc_score(label, -svm_score)  # 单类SVM AUC
-cov_auc = roc_auc_score(label, -cov_score)  # 椭圆包络 AUC
-iso_auc = roc_auc_score(label, -iso_score)  # 孤立森林 AUC
+# 计算各种检测器的AUC（使用原始分数，因为评分值越小表示越异常，而label=1表示正常样本）
+lof_auc = roc_auc_score(label, lof_score)  # LOF AUC
+svm_auc = roc_auc_score(label, svm_score)  # 单类SVM AUC
+cov_auc = roc_auc_score(label, cov_score)  # 椭圆包络 AUC
+iso_auc = roc_auc_score(label, iso_score)  # 孤立森林 AUC
 
 # 打印传统检测器的AUC结果
 print("传统检测器AUC:")

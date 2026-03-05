@@ -35,7 +35,7 @@ def auc(x, label, y):
     基于重建误差的不同度量方法
     参数:
         x: 原始图像 [batch, 1, H, W]
-        label: 标签 (0=正常, 1=异常)
+        label: 标签 (0=异常, 1=正常)
         y: 重建图像 [batch, 1, H, W]
     返回:
         mae_auc: 平均绝对误差的AUC
