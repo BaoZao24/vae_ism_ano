@@ -16,6 +16,7 @@ import random
 import pdb
 import pickle
 import os
+import json
 
 # 设置随机种子，确保实验可复现
 setup_seed(99)
@@ -127,6 +128,21 @@ for epoch in range(1000):
             writer.add_scalars("auc", {"attn": attn_auc}, step)    # 注意力AUC
             writer.add_scalars("auc", {"xujing": xujing_auc}, step) # 相对误差AUC
             writer.add_scalars("auc", {"mse": mse_auc}, step)      # MSE AUC
+
+            # 保存结果到JSON文件
+            results = {
+                "epoch": epoch + 1,
+                "loss": float(loss.item()),
+                "auc_scores": {
+                    "mae": float(mae_auc),
+                    "mse": float(mse_auc),
+                    "xujing": float(xujing_auc),
+                    "attn": float(attn_auc)
+                },
+                "best_mae_auc": float(mae_best if mae_auc <= mae_best else mae_auc)
+            }
+            with open("./result/vae_results.json", "w") as f:
+                json.dump(results, f, indent=2)
 
         # 如果当前MAE AUC优于历史最佳，则保存模型
         if mae_auc > mae_best:
